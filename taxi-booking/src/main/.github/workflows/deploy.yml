@@ -1,0 +1,24 @@
+name: Deploy Website to Tomcat
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout prod branch
+        uses: actions/checkout@v4
+
+      - name: Deploy files to AWS Tomcat
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avzr --delete --exclude=".git"
+          path: ./
+          remote_path: /opt/tomcat/webapps/webapp/
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
